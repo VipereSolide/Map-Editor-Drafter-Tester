@@ -22,19 +22,35 @@ public class MenuWindow : MonoBehaviour
     [SerializeField] private float m_shadowWindowFadeTime;
     [SerializeField] private float m_slideInWindowTime;
 
+    private bool m_isActive = false;
+
+    public bool IsActive { get { return m_isActive; } }
+
     public void SetActive(bool _Value)
     {
-        if (m_shadowCanvasGroup != null) StartCoroutine(CanvasGroupHelper.Fade(m_shadowCanvasGroup, _Value, m_shadowWindowFadeTime));
+        m_isActive = _Value;
+        UpdateState();
+    }
+
+    public void Toggle()
+    {
+        m_isActive = !m_isActive;
+        UpdateState();
+    }
+
+    private void UpdateState()
+    {
+        if (m_shadowCanvasGroup != null) StartCoroutine(CanvasGroupHelper.Fade(m_shadowCanvasGroup, m_isActive, m_shadowWindowFadeTime));
 
         if (!m_useTargetPosition)
         {
-            Vector3 _startPos = new Vector3((_Value) ? m_slideLeftValue : -m_slideLeftValue, m_windowTransform.position.y, m_windowTransform.position.z);
-            Vector3 _targetPos = new Vector3((_Value) ? -m_slideLeftValue : m_slideLeftValue, m_windowTransform.position.y, m_windowTransform.position.z);
+            Vector3 _startPos = new Vector3((m_isActive) ? m_slideLeftValue : -m_slideLeftValue, m_windowTransform.position.y, m_windowTransform.position.z);
+            Vector3 _targetPos = new Vector3((m_isActive) ? -m_slideLeftValue : m_slideLeftValue, m_windowTransform.position.y, m_windowTransform.position.z);
             StartCoroutine(FadePos(m_windowTransform, _startPos, _targetPos, m_slideInWindowTime));
         }
         else
         {
-            StartCoroutine(FadePos(m_windowTransform, (_Value) ? m_beforePosition : m_afterPosition, (_Value) ? m_afterPosition : m_beforePosition, m_slideInWindowTime));
+            StartCoroutine(FadePos(m_windowTransform, (m_isActive) ? m_beforePosition : m_afterPosition, (m_isActive) ? m_afterPosition : m_beforePosition, m_slideInWindowTime));
         }
     }
 
