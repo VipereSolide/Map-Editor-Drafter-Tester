@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlanController : MonoBehaviour
 {
+    public static PlanController Instance;
+
     [SerializeField] private float m_cellSize = 31.5f;
     [SerializeField] private float m_cellPositionSize = 31.5f;
 
@@ -13,6 +15,11 @@ public class PlanController : MonoBehaviour
 
     public RectTransform SelectedObject { get { return m_selectedObject; } }
     public bool IsDragging { get { return m_isDragging; } }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     public void SetSelectedObject(RectTransform _object)
     {
