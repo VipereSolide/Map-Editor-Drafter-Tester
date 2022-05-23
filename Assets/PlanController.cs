@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlanController : MonoBehaviour
 {
+    [SerializeField] private float m_cellSize = 31.5f;
+
     private RectTransform m_selectedObject;
     private bool m_isDragging = false;
     private Vector2 m_lastPosition;
@@ -37,13 +39,18 @@ public class PlanController : MonoBehaviour
     {
         if (m_isDragging && m_selectedObject != null)
         {
-            Vector2 _mousePosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+            Vector2 _mousePosition = new Vector2(
+                Mathf.Round(Input.mousePosition.x / m_cellSize) * m_cellSize,
+                Mathf.Round(Input.mousePosition.y / m_cellSize) * m_cellSize
+            );
+
             Vector2 _screenSize = new Vector2(m_lastPosition.x, m_lastPosition.y);
             Vector2 _sizeDelta = (_mousePosition - _screenSize / 2);
             Vector2 _sizeDeltaPosition = _screenSize / 2 + _sizeDelta / 2;
+            float _roundedCell = m_cellSize / 2;
 
-            m_selectedObject.sizeDelta = _sizeDelta;
             m_selectedObject.SetPositionAndRotation(_sizeDeltaPosition, Quaternion.identity);
+            m_selectedObject.sizeDelta = _sizeDelta;
         }
 
         if (Input.GetMouseButtonUp(0))
