@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlanController : MonoBehaviour
 {
     [SerializeField] private float m_cellSize = 31.5f;
+    [SerializeField] private float m_cellPositionSize = 31.5f;
 
     private RectTransform m_selectedObject;
     private bool m_isDragging = false;
@@ -19,7 +20,13 @@ public class PlanController : MonoBehaviour
             return;
 
         m_selectedObject = _object;
-        m_lastPosition = Input.mousePosition * 2;
+
+        Vector2 _mousePosition = new Vector2(
+            Mathf.Round(Input.mousePosition.x / m_cellPositionSize) * m_cellPositionSize,
+            Mathf.Round(Input.mousePosition.y / m_cellPositionSize) * m_cellPositionSize
+        );
+
+        m_lastPosition = _mousePosition * 2;
 
         StartDragging();
     }
@@ -44,12 +51,14 @@ public class PlanController : MonoBehaviour
                 Mathf.Round(Input.mousePosition.y / m_cellSize) * m_cellSize
             );
 
+            // -480 != -475.5
+
             Vector2 _screenSize = new Vector2(m_lastPosition.x, m_lastPosition.y);
             Vector2 _sizeDelta = (_mousePosition - _screenSize / 2);
             Vector2 _sizeDeltaPosition = _screenSize / 2 + _sizeDelta / 2;
             float _roundedCell = m_cellSize / 2;
 
-            m_selectedObject.SetPositionAndRotation(_sizeDeltaPosition, Quaternion.identity);
+            m_selectedObject.SetPositionAndRotation(_sizeDeltaPosition + new Vector2(-1f,-4), Quaternion.identity);
             m_selectedObject.sizeDelta = _sizeDelta;
         }
 
